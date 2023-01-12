@@ -1,0 +1,219 @@
+\documentclass[12pt, a4paper, openany]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% LANGUAGE
+\usepackage[english]{babel}
+\usepackage{enumitem}  % Enumerate improved
+
+% MATH / Others
+\usepackage{amsmath, amssymb, amsthm}  % Math symbols
+\usepackage{physics}  % \norm and \abs
+\usepackage{esvect, cancel}  % Misc., vectors, strikethrough
+\usepackage{mhchem}  % Chemistry
+\usepackage{siunitx}  % Units SI
+\usepackage{minted}  % Code fences ([cache=false])
+\setminted[python]{
+    fontsize=\footnotesize,
+    tabsize=4,
+    rulecolor=black,
+    xleftmargin=18pt,
+    linenos,
+    breaklines
+}
+\usemintedstyle{pastie}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+\newtheorem*{prf}{Proof}
+
+\theoremstyle{remark}
+\newtheorem{rmk}{Remark}
+
+% GEOMETRY
+\usepackage[
+    paper=a4paper,
+    top=2.5cm,
+    left=2.25cm,
+    headheight=15pt,
+    headsep=12pt,
+    textwidth=16cm,
+    textheight=24cm,
+]{geometry}
+\usepackage{parskip}  % Reformat paragraphs, no indent first line
+\usepackage{enumitem}  % Enumerate improved
+\usepackage{scrextend}  % Indent text with addmargin environment
+\usepackage{graphicx}  % Include graphics
+\graphicspath{{latex-img/}}
+\usepackage{caption}  % Caption without figures
+
+
+% HYPERLINKS
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    linkcolor=blue,
+}
+
+% HEADERS
+\usepackage{fancyhdr}
+    \pagestyle{fancy}
+    \lhead{Lecture 1}
+    \rhead{Samyak Shah}
+    \renewcommand{\footrulewidth}{0.4pt}
+    \renewcommand{\headrulewidth}{0.4pt}
+\usepackage{etoolbox}  % Define chapter page style
+    \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
+
+% TITLE PAGE
+\title{Advanced Linear Algebra: Lecture 1}
+\author{Samyak Shah}
+\date{01/09/2023}
+
+\begin{document}
+% TITLE
+\maketitle
+% TOC
+\pagenumbering{gobble}{
+    \tableofcontents
+    \thispagestyle{plain}
+    \cleardoublepage
+}
+\pagenumbering{arabic}
+
+\section{Fields}
+
+\begin{defn}[\textbf{Field}]
+    A \textit{field} is a triple $(F, +, \cdot)$ where $F$ is a set, and $+$ and $\cdot$ are binary operations on $F$
+    (called \textit{addition} and \textit{multiplication} respectively) satisfying the following nine conditions (known as the \textit{field axioms})
+    For all axioms, $a, b, c \in F$.
+\end{defn}
+
+\begin{enumerate}
+    \item \textbf{Associativity of addition} Addition $(+)$ is an associative operation on $F$. i.e. $a + (b + c) = (a + b) + c$
+    \item \textbf{Existence of additive identity} There is an identity element for addition. We know that this identity is unique, and we will denote it by $0$.
+    \item \textbf{Existence of additive inverses} Every element $x$ of $F$ is invertible for $+$. We know that the additive inverse for $x$ is unique, and we will denote it by $-x$.
+    \item \textbf{Commutativity of multiplication} Multiplication $(\cdot)$ is a commutative operation on $F$. i.e. $a\cdot b = b \cdot a$.
+    \item \textbf{Associativity of multiplication} Multiplication is an associative operation on F. i.e \(a \cdot (b \cdot c) = (a \cdot b) \cdot c\)
+    \item \textbf{Existence of multiplicative identity} There is an identity element for multiplication. We know that this identity is unique, and we will denote it by \(1\)
+    \item \textbf{Existence of multiplicative inverses} Every element \(x\) of \(F\) except possibly \(0\) is invertible for \((\cdot)\). We know that the multiplicative inverse for \(x\) is unique, and we will denote it by \(x^{-1}\).
+          We do not assume \(0\) is not invertible. We just do not assume that it is.
+    \item \textbf{Distributive law} For all \(x, y, z\) in \(F\), \(x \cdot (y + x) = (x \cdot y) + (x \cdot z)\)
+    \item \textbf{Zero-One Law} The additive identity and multiplicative identity are distinct; i.e. \(0 \neq 1\)
+\end{enumerate}
+
+Commutativity of addition can be proved from the other axioms, and is thus presented as a theorem.
+
+\begin{thm}[\textbf{(Commutativity of addition)}]
+    Let $F$ be any field. Then $+$ is a commutative operation on $F$.
+\end{thm}
+
+\begin{prf}
+    Let $x,y \in F$. Since multiplication is commutative, we have
+    $$(1 + x) \cdot (1 + y) = (1+y) \cdot (1+x)$$
+    By the distributive law,
+    $$((1 + x) \cdot 1) + ((1 + x) \cdot y) = ((1+y) \cdot 1) + ((1 + y) \cdot x)$$
+    Since $1$ is the multiplicative identity,
+    $$(1+x) + ((1+x)  \cdot y) = (1+y) + ((1 + y) \cdot x)$$
+    and hence
+    $$1 + (x + ((1 + x)  \cdot y)) = 1 + (y + ((1 + y) \cdot x))$$
+    By the cancellation law for addition
+    $$x + ((1 + x) \cdot y) = y ((1 + y) \cdot x)$$
+    By commutativity of multiplication and the distributive law
+    $$x + (y \cdot (1+x)) = y + (x \cdot (1 + y))$$
+    and
+    $$x + ((y \cdot 1) + (y \cdot x)) = y + ((x \cdot 1) + (x \cdot y))$$
+    Since $1$ is the multiplicative identity and addition is associative
+    $$x + (y + (y \cdot x)) = y + (x + (x \cdot y))$$
+    and hence
+    \[(x + y) + (y \cdot x) = (y + x) + (x \cdot y)  \]
+    Since multiplication is commutative,
+    \[ (x + y) + (x \cdot y) = (y + x) + (x \cdot y) \]
+    and by the cancellation law for addition,
+    \[ x + y = y + x \]
+    Hence, \(+\) is commutative. \qed
+\end{prf}
+
+We can alternatively determine the definition of a field in terms of groups.
+
+\begin{defn} [Group]
+    A \textit{group} is a set \( G \) with an associative binary operation
+    \[ \ast:  G \cross G \rightarrow G\ \]
+    which means
+    \[ (g, g') \mapsto g \ast g' \]
+    Note that sometimes, the \( \ast \) will be omitted entirely, i.e. \( g \ast g' = g g' \) \\
+    that has
+    \begin{itemize}
+        \item an identity \( e \) with \( e \ast g = g \ast e = g,  \forall  g \in G \)
+        \item an inverse \( g^{-1} \) for each \( g \in G \), so \( g \ast g^{-1} = e = g^{-1} \ast g \)
+    \end{itemize}
+\end{defn}
+
+\begin{defn}[Abelian Group]
+    \( G \) is abelian, if \( \ast \) is commutative. i.e. \( g \ast h = h \ast g, \forall g, h \in  G \)
+
+\end{defn}
+
+\begin{defn}[Field]
+    A field is an Abelian group \( (F, +) \) with additive identity \( 0 \) such that
+    \begin{itemize}
+        \item \( F^{*} = F \setminus \{0\} \) is an Abelian group \( (F^{*}, \cdot) \) and
+        \item multiplication \( (\cdot) \) distributes over addition \( (+) \). i.e. \( a \cdot (b + c) = a \cdot b + a \cdot c \)
+    \end{itemize}
+\end{defn}
+
+Note that if you are given an Abelian group \( (F, +) \) with additive identity \( 0 \), then just taking away the additive identity does not mean you now magically have a field. In other words, a field is not induced.
+It only becomes a field if it has another group structure given to you.\\
+
+If the field happens to be something like \( \mathbb{F}_p = \{ 0, 1, \dots, p-1 \} \), then the additive strucure does induce the multiplicative structure, but for most fields this isn't true. Everything you already know
+\textbf{will} still apply to arbitrary vector fields, except for the notions of:
+\begin{itemize}
+    \item length \( \implies \) the notion of topology
+    \item angle
+    \item order \( (a=b) \)
+\end{itemize}
+
+\section{Vector Space}
+\begin{defn}[Vector Space]
+    A vector space over \( F \) is \( (V, +) \) Abelian group with an \textbf{action} of \( F \).
+    \[ F \cross V \rightarrow V \]
+    \[ (\alpha, v) \mapsto \alpha V \] that
+    \begin{itemize}
+        \item distributes over \( (+) \) on both sides. i.e. \( (\alpha + \alpha', v) \mapsto \alpha v + \alpha' v \) and \( (\alpha, v + v') \mapsto \alpha v + \alpha v' \)
+        \item associative: \( \alpha (\beta v) = (\alpha \beta) v\). Note that these two multiplications are different. In the first case, it is a multiplication between the action and the field first, and then again between the action and the field. In the second case, it is a multiplication between the action and the action first, and then between the action and the field.
+        \item \( 1v = v,  \forall  v \in  V \), where 1 is the multiplicative identity.
+    \end{itemize}
+\end{defn}
+
+Note that typically the there are 9 axioms for a vector space and 8 for a field, and they are awfully similar looking. They can be better summarized by using the notion of groups as above.
+
+\section{Homomorphism}
+\begin{defn}[Homomorphism]
+    A homomorphism of vector spaces is a linear map.
+\end{defn}
+
+Any map that respects the linear structure is known as a homomorphism. This is a term that you will see a lot in algebra courses.
+i.e. If \( \mathcal{B} \) is a basis for \( V \), then function \( f \) mapping \( \mathcal{B} \rightarrow \mathcal{W} \) implies
+that \( \exists \) a homomorphism \( \phi : V \rightarrow W \) with \( \phi|_\mathcal{B} = f \). The final symbol means that we are restricting
+the homomorphism \( \phi \) to the basis \( \mathcal{B} \).
+
+\begin{defn}[]
+    \( \phi: V \rightarrow W \) has kernel \( \ker \phi = \{ v \in  V | \phi v = 0\} \), and image \( \mathrm{im} \phi = \{ \phi v | v \in  V \} \subseteq W \). These are both subspaces. This means that it is a vector space that is contained in the vector space that you've already been given.
+\end{defn}
+
+\begin{thm}[Rank-Nullity]
+    \[ \dim ( \ker \phi ) + \dim ( \mathrm{im} \phi ) = \dim V \].
+\end{thm}
+The \( \dim ( \ker \phi) \) is the rank and the \( \dim (\mathrm{im} \phi) \) is the nullity.
+
+\begin{defn}
+    \( \phi \) is an isomorphism if \( \phi \) is \textbf{injective} and \textbf{surjective}.
+
+\end{defn}
+
+
+\end{document}
